@@ -15,7 +15,7 @@ class Aluno(Pessoa):
     def __str__(self):
         return (f"Nome do aluno: {self.nome}\n"
                 f"Idade do aluno: {self.idade}\n"
-                f"Personal do aluno: {'Sem personal' if self.personal is None else self.personal}\n"
+                f"Personal do aluno: {'Sem personal' if self.personal is None else self.personal.nome}\n"
                 f"Plano: {'Sem matrícula' if self.plano is None else self.plano.nome}\nSaldo: R${self.saldo:.2f}")
 
     @property
@@ -26,10 +26,23 @@ class Aluno(Pessoa):
     def matriculado(self, atualizar: bool):
         self._matriculado = atualizar
 
-    def pagar(self, plano):
-        if self.saldo >= plano.preco:
-            self.saldo -= plano.preco
-            print(f"Pagamento de R${plano.preco:.2f} efetuado")
+
+    @property
+    def saldo(self):
+        return self._saldo
+    
+    @saldo.setter
+    def saldo(self, valor):
+        if valor <= 0:
+            return "o saldo não pode ser menor ou igual 0"
+        self._saldo = valor
+
+
+
+    def pagar(self, valor):
+        if self.saldo >= valor:
+            self.saldo -= valor
+            print(f"Pagamento de R${valor:.2f} efetuado")
             return True
         else:
             return False
@@ -121,7 +134,7 @@ class Academia:
         if aluno in self.alunos:
             return "O aluno já está matriculado"
         if aluno not in self.alunos:
-            if aluno.pagar(plano):
+            if aluno.pagar(plano.preco):
                 aluno.plano = plano
                 aluno.matriculado = True
                 self.alunos.append(aluno)
@@ -141,7 +154,6 @@ class Academia:
         aluno.personal = personal
         return f"Personal {personal.nome} designado para {aluno.nome}!"
              
-                
 
 
 if __name__ == "__main__":
@@ -151,4 +163,5 @@ if __name__ == "__main__":
     academia = Academia("Espaço fitness", [Basico(), Pro(), Premium()])
     academia.cadastrar_personal(personal)
     academia.matricular(aluno, Premium())
+    academia.designar_personal(personal, aluno)
     print(aluno)
