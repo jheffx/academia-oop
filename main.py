@@ -129,7 +129,7 @@ class Academia:
             else:
                 return "Não foi possível concluir a matrícula. Pagamento não concluido"
 
-    # ✅ Verifica erros primeiro, age depois
+
     def designar_personal(self, personal, aluno):
         if personal not in self.personais:
             return "Personal não está cadastrado."
@@ -151,5 +151,4 @@ if __name__ == "__main__":
     academia = Academia("Espaço fitness", [Basico(), Pro(), Premium()])
     academia.cadastrar_personal(personal)
     academia.matricular(aluno, Premium())
-    academia.designar_personal(personal, aluno)
     print(aluno)
