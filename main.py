@@ -129,18 +129,17 @@ class Academia:
             else:
                 return "Não foi possível concluir a matrícula. Pagamento não concluido"
 
+    # ✅ Verifica erros primeiro, age depois
     def designar_personal(self, personal, aluno):
-
-        if personal in self.personais and aluno in self.alunos:
-            if isinstance(aluno.plano, Premium):
-                aluno.personal = personal
-       
-
         if personal not in self.personais:
-            return "Personal não está cadastrado"
-
+            return "Personal não está cadastrado."
         if aluno not in self.alunos:
             return "O aluno não está matriculado."
+        if not isinstance(aluno.plano, Premium):
+           return "Apenas alunos Premium podem ter personal."
+    
+        aluno.personal = personal
+        return f"Personal {personal.nome} designado para {aluno.nome}!"
              
                 
 
