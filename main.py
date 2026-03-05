@@ -26,18 +26,15 @@ class Aluno(Pessoa):
     def matriculado(self, atualizar: bool):
         self._matriculado = atualizar
 
-
     @property
     def saldo(self):
         return self._saldo
-    
+
     @saldo.setter
     def saldo(self, valor):
-        if valor <= 0:
-            return "o saldo não pode ser menor ou igual 0"
+        if valor < 0:
+            raise ValueError("O saldo não pode ser menor que 0")
         self._saldo = valor
-
-
 
     def pagar(self, valor):
         if self.saldo >= valor:
@@ -47,20 +44,12 @@ class Aluno(Pessoa):
         else:
             return False
 
-    @property
-    def personal(self):
-        return self._personal
-    
-    @personal.setter
-    def personal(self, personal):
-        self._personal = personal
-
-
 
 class Personal(Pessoa):
-    def __init__(self, nome, idade, especialidade):
+    def __init__(self, nome, idade, especialidade, taxa):
         super().__init__(nome, idade)
         self.especialidade = especialidade
+        self.taxa = taxa
 
     def __str__(self):
         return (f"Nome do Personal: {self.nome}\n"
@@ -142,26 +131,36 @@ class Academia:
             else:
                 return "Não foi possível concluir a matrícula. Pagamento não concluido"
 
-
     def designar_personal(self, personal, aluno):
         if personal not in self.personais:
             return "Personal não está cadastrado."
         if aluno not in self.alunos:
             return "O aluno não está matriculado."
         if not isinstance(aluno.plano, Premium):
-           return "Apenas alunos Premium podem ter personal."
-    
+            return "Apenas alunos Premium podem ter personal."
+
         aluno.personal = personal
         return f"Personal {personal.nome} designado para {aluno.nome}!"
-             
+
+    def contratar_personal(self, personal, aluno):
+        if aluno not in self.alunos:
+            return "O aluno não tem matrícula ativa."
+        if not isinstance(aluno.plano, Premium):
+            if aluno.pagar(personal.taxa):
+                aluno.personal = personal
+                return f"Personal contratado para {aluno.nome} por uma taxa de R${personal.taxa}"
+            else:
+                return "Saldo insuficiente para contratar personal"
+        return f"Assinantes Premium não precisam contratar personal, pois já está incluso no plano."
 
 
 if __name__ == "__main__":
-    aluno = Aluno("Jhefferson", 28, 2000)
-    personal = Personal("José", 35, ["Musculação", "Cárdio"])
+    aluno = Aluno("Jhefferson", 28, 400)
+    personal = Personal("José", 35, ["Musculação", "Cárdio"], 25.0)
 
     academia = Academia("Espaço fitness", [Basico(), Pro(), Premium()])
     academia.cadastrar_personal(personal)
-    academia.matricular(aluno, Premium())
+    academia.matricular(aluno, Basico())
     academia.designar_personal(personal, aluno)
+    print(academia.contratar_personal(personal, aluno))
     print(aluno)
