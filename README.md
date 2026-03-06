@@ -46,5 +46,5 @@ python main.py
 - Organização em módulos e pacotes
 
 ## 👨‍💻 Autor
-Seu Nome
+**Jhefferson**
 github.com/jheffx
